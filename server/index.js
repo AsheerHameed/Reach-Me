@@ -13,8 +13,10 @@ import userRoutes from "./routes/users.js";
 import postRoutes from "./routes/posts.js";
 import { register } from "./controllers/auth.js";
 import { verifyToken } from "./middleware/auth.js";
-import { createPost } from "./middleware/posts.js";
-
+import { createPost } from "./controllers/posts.js";
+import User from "./models/User.js";
+import Post from "./models/Post.js";
+import { users, posts } from "./data/index.js";
 
 /* Configurations and mid dleware */
 const __filename = fileURLToPath(import.meta.url);
@@ -46,8 +48,11 @@ could be written as single name i.e "storage" so here's i have implemented that 
 const upload = multer({ storage }); //middleware for file upload
 
 /* Routes with files */
+
 app.post("/auth/register", upload.single("picture"), register);
 app.post("/posts", verifyToken, upload.single("picture"), createPost);
+
+
 /* All other Routes */
 app.use("/auth", authRoutes);
 app.use("/users", userRoutes);
@@ -61,5 +66,11 @@ mongoose
   })
   .then(() => {
     app.listen(PORT, () => console.log(`Server Port: ${PORT}`));
+    
+    /* adding a dummy data source */
+    // User.insertMany(users);
+    // Post.insertMany(posts);
+
   })
   .catch((error) => console.log(`${error} did not connect`));
+
